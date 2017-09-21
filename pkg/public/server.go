@@ -2,10 +2,12 @@ package public
 
 import (
 	"context"
+	"log"
 	"net"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 )
 
 type Server struct {
@@ -13,6 +15,8 @@ type Server struct {
 	router   *mux.Router
 	listener net.Listener
 }
+
+var upgrader = websocket.Upgrader{}
 
 func NewServer(addr string) (*Server, error) {
 	l, err := net.Listen("tcp", addr)
@@ -24,7 +28,21 @@ func NewServer(addr string) (*Server, error) {
 	}, err
 }
 
+func (s *Server) websocketHandler(w http.ResponseWriter, r *http.Request) {
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("upgrade:", err)
+		return
+	}
+
+	defer ws.Close()
+
+}
+
 func (s *Server) Serve() error {
+	// register this for last so it can override any route
+	s.router.PathPrefix("/").Handler(http.FileServer(http.Dir("./data/html")))
+	s.router.HandleFunc("/ws", s.websocketHandler)
 	return s.server.Serve(s.listener)
 }
 

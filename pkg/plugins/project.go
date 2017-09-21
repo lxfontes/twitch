@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/lxfontes/twitch/pkg/bot"
-	"github.com/lxfontes/twitch/public"
+	"github.com/lxfontes/twitch/pkg/public"
 )
 
 type project struct {
@@ -23,7 +23,7 @@ func (p *project) Configure(b bot.Client, s *public.Server) {
 }
 
 func (p *project) ServeIRC(from string, msg string) {
-	p.bot.Say("luls")
+	p.bot.Say("luls @lxfontes")
 }
 
 func (p *project) ServeHTTP(w http.ResponseWriter, r *http.Request) {

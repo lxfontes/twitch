@@ -8,8 +8,8 @@ import (
 	"syscall"
 
 	"github.com/lxfontes/twitch/pkg/bot"
-	"github.com/lxfontes/twitch/plugins"
-	"github.com/lxfontes/twitch/public"
+	"github.com/lxfontes/twitch/pkg/plugins"
+	"github.com/lxfontes/twitch/pkg/public"
 )
 
 func main() {
@@ -37,7 +37,7 @@ func main() {
 	}
 
 	go s.Serve()
-	//	go c.Serve()
+	go c.Serve()
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
@@ -45,7 +45,7 @@ func main() {
 	<-sigs
 
 	cancel()
-	//	c.Stop()
+	c.Stop()
 	s.Stop()
 	log.Println("shutdown complete")
 }

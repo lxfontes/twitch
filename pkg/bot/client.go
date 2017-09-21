@@ -47,7 +47,7 @@ func NewClient(nick, password, channel string) (*client, error) {
 	c := irc.IRC(nick, "lxfB0T")
 	c.Password = password
 	c.VerboseCallbackHandler = true
-	c.Debug = true
+	c.Debug = false
 	c.UseTLS = false
 	c.TLSConfig = &tls.Config{}
 	c.AddCallback("001", func(e *irc.Event) { c.Join(ret.channelName) })

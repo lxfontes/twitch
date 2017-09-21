@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/lxfontes/twitch/pkg/bot"
-	"github.com/lxfontes/twitch/public"
+	"github.com/lxfontes/twitch/pkg/public"
 )
 
 func DefaultStack() []Plugin {
