@@ -1,16 +1,39 @@
 <html>
   <head>
-    <meta http-equiv="refresh" content="10">
     <script src="stream.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css"/>
   </head>
   <body>
-  <div class='console-container'>
-    <span id='text'></span>
-    <div class='console-underscore' id='console'>&#95;</div>
-  </div>
+    <img id="gif"/>
+
   <script>
-    consoleText(['something something'], 'text',['tomato']);
+
+function setupWebsocket() {
+  var conn = new WebSocket('ws://' + location.host + '/ws');
+  conn.onclose = function(evt) {}
+
+  conn.onmessage = function(evtRaw) {
+    console.log(evtRaw);
+    var event = JSON.parse(evtRaw.data);
+    switch(event.name) {
+      case "gif":
+        console.log(event);
+        $("#gif").attr('src', event.args.target).fadeIn().delay(10000).fadeOut();
+    }
+  };
+
+  conn.onopen = function() {
+    console.log('connected');
+  };
+
+  conn.onclose = function() {
+    console.log("reconnecting in 5 secs");
+    setTimeout(setupWebsocket, 5000);
+  };
+}
+
+setupWebsocket();
   </script>
   </body>
 </html>

@@ -9,7 +9,7 @@ import (
 
 func DefaultStack() []Plugin {
 	return []Plugin{
-		&project{},
+		&giffer{},
 	}
 }
 
