@@ -1,7 +1,6 @@
 package plugins
 
 import (
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -29,6 +28,7 @@ var _ http.Handler = &giffer{}
 
 func (g *giffer) Configure(b bot.Client, s *public.Server) {
 	b.Register(gifCommand, g)
+	s.OBSScript("/js/gif.js")
 	s.Router().Handle("/event/gif", g)
 	g.bot = b
 	g.public = s
@@ -60,14 +60,7 @@ func (g *giffer) ServeIRC(from string, msg string) {
 }
 
 func (g *giffer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	f, err := os.Open("data/html/images/sax.png")
-	if err != nil {
-		http.Error(w, "couldnt open image", http.StatusInternalServerError)
-		return
-	}
-	defer f.Close()
-
-	w.Header().Set("Content-type", "image/png")
-
-	io.Copy(w, f)
+	gif := public.NewCommand("gif")
+	gif.Arguments["target"] = "https://media.giphy.com/media/3owvK6fi98W6lCKZSE/giphy.gif"
+	g.public.SendCommand(gif)
 }

@@ -3,6 +3,8 @@ package public
 import (
 	"context"
 	"errors"
+	"fmt"
+	"html/template"
 	"log"
 	"net"
 	"net/http"
@@ -30,7 +32,9 @@ type Server struct {
 	router   *mux.Router
 	listener net.Listener
 
-	toStream chan *Command
+	toStream   chan *Command
+	obsScripts []string
+	obsStyles  []string
 }
 
 type Command struct {
@@ -54,6 +58,14 @@ func NewServer(addr string) (*Server, error) {
 		listener: l,
 		toStream: make(chan *Command),
 	}, err
+}
+
+func (s *Server) OBSScript(path string) {
+	s.obsScripts = append(s.obsScripts, path)
+}
+
+func (s *Server) OBSStyle(path string) {
+	s.obsStyles = append(s.obsStyles, path)
 }
 
 func (s *Server) SendCommand(cmd *Command) error {
@@ -115,9 +127,29 @@ func (s *Server) websocketHandler(w http.ResponseWriter, r *http.Request) {
 	wg.Wait()
 }
 
+func (s *Server) obsHandler(w http.ResponseWriter, r *http.Request) {
+	tmplt, err := template.ParseFiles("data/html/stream.html")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	p := struct {
+		Scripts []string
+		Styles  []string
+	}{
+		Scripts: s.obsScripts,
+		Styles:  s.obsStyles,
+	}
+
+	err = tmplt.Execute(w, p)
+	fmt.Println("obsHandled", err)
+}
+
 func (s *Server) Serve() error {
 	// register this for last so it can override any route
 	s.router.HandleFunc("/ws", s.websocketHandler)
+	s.router.HandleFunc("/stream.html", s.obsHandler)
 	s.router.PathPrefix("/").Handler(http.FileServer(http.Dir("./data/html")))
 	return s.server.Serve(s.listener)
 }

@@ -1,39 +1,23 @@
 <html>
   <head>
-    <script src="stream.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.1/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    {{range .Styles}}
+    <link rel="stylesheet" type="text/css" href="{{.}}"></script>
+    {{end}}
   </head>
   <body>
-    <img id="gif"/>
-
-  <script>
-
-function setupWebsocket() {
-  var conn = new WebSocket('ws://' + location.host + '/ws');
-  conn.onclose = function(evt) {}
-
-  conn.onmessage = function(evtRaw) {
-    console.log(evtRaw);
-    var event = JSON.parse(evtRaw.data);
-    switch(event.name) {
-      case "gif":
-        console.log(event);
-        $("#gif").attr('src', event.args.target).fadeIn().delay(10000).fadeOut();
-    }
-  };
-
-  conn.onopen = function() {
-    console.log('connected');
-  };
-
-  conn.onclose = function() {
-    console.log("reconnecting in 5 secs");
-    setTimeout(setupWebsocket, 5000);
-  };
-}
-
-setupWebsocket();
-  </script>
+    <div class="container is-fluid">
+      <div id="app">
+        <div id="sandbox"></div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.0/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="stream.js" type="application/javascript"></script>
+    {{range .Scripts}}
+    <script src="{{.}}" type="application/javascript"></script>
+    {{end}}
   </body>
 </html>
