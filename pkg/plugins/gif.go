@@ -23,11 +23,11 @@ type giffer struct {
 }
 
 var _ Plugin = &giffer{}
-var _ bot.Handler = &giffer{}
+var _ bot.MessageHandler = &giffer{}
 var _ http.Handler = &giffer{}
 
 func (g *giffer) Configure(b bot.Client, s *public.Server) {
-	b.Register(gifCommand, g)
+	b.AddMessageHandler(gifCommand, g)
 	s.OBSScript("/js/gif.js")
 	s.Router().Handle("/event/gif", g)
 	g.bot = b
@@ -35,7 +35,7 @@ func (g *giffer) Configure(b bot.Client, s *public.Server) {
 	g.client = giphy.New(os.Getenv("BOT_GIPHY_KEY"))
 }
 
-func (g *giffer) ServeIRC(from string, msg string) {
+func (g *giffer) OnMessage(from string, msg string) {
 	what := strings.TrimSpace(strings.TrimPrefix(msg, gifCommand))
 	if what == "" {
 		log.Println("blank gif query")

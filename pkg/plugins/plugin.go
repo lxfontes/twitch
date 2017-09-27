@@ -10,6 +10,7 @@ import (
 func DefaultStack() []Plugin {
 	return []Plugin{
 		&giffer{},
+		&spotify{},
 	}
 }
 

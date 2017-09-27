@@ -10,13 +10,20 @@ import (
 	"github.com/lxfontes/twitch/pkg/bot"
 	"github.com/lxfontes/twitch/pkg/plugins"
 	"github.com/lxfontes/twitch/pkg/public"
+	"github.com/lxfontes/twitch/pkg/store"
 )
 
 func main() {
 	botUser := os.Getenv("BOT_USER")
 	botPass := os.Getenv("BOT_PASS")
 	botChannel := os.Getenv("BOT_CHANNEL")
-	c, err := bot.NewClient(botUser, botPass, botChannel)
+
+	storage, err := store.NewRedisStore()
+	if err != nil {
+		panic(err)
+	}
+
+	c, err := bot.NewClient(botUser, botPass, botChannel, storage)
 	if err != nil {
 		panic(err)
 	}

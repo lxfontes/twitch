@@ -37,6 +37,11 @@ var vm = new Vue({
       var ev = JSON.parse(evtRaw.data);
       sharedData(ev.args);
       this.currentView = Vue.component(ev.name);
+
+      var self = this;
+      setTimeout(function() {
+        self.currentView = Vue.component('blank');
+      }, 5000);
     },
     setupWebsocket: function() {
       var address = 'ws://' + location.host + '/ws';
